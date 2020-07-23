@@ -13,86 +13,104 @@ import java.util.List;
 
 public class JsonUtils {
 
+    public static List<String> toStringListArray(JSONArray array) {
+        if(array==null)
+            return null;
+
+        List<String> arrList = new ArrayList<>(array.length());
+        for(int i=0; i < array.length(); i++) {
+            arrList.add(array.optString(i));
+        }
+        return arrList;
+    }
+
     public static Sandwich parseSandwichJson(String json) {
         //public Sandwich(String mainName, List<String> alsoKnownAs, String placeOfOrigin, String description, String image, List<String> ingredients)
         Log.d("WWD", "in parseSandwichJson input json is " + json);
-        JSONObject jOBJ = null;
+
+        // first parse string into JSONObject
+        JSONObject jsonOBJ = null;
         try {
-            jOBJ = new JSONObject(json);
+            jsonOBJ = new JSONObject(json);
         } catch (JSONException e) {
             Log.d("WWD", "exception on creating JSON object from json string");
             e.printStackTrace();
         }
-        Log.d("WWD", "created JSONObject form string " + jOBJ);
-        JSONObject jsonName;
+
+        // next parse name object then mainName
+        JSONObject jsonName = null;
         try {
-            jsonName = jOBJ.getJSONObject("name");
+            jsonName = jsonOBJ.getJSONObject("name");
         } catch (JSONException e) {
             jsonName = null;
             Log.d("WWD", "got execption parsing name JSON Object");
             e.printStackTrace();
         }
         Log.d("WWD", "parsed name object is " +  jsonName);
-        String n1= null;
+        String name= "";
         try {
-            n1 =  jsonName.getString("mainName");
+            name =  jsonName.getString("mainName");
         } catch (JSONException e) {
             Log.d("WWD", "got exception parsing mainName");
             e.printStackTrace();
         }
-        Log.d("WWD", "mainName is " + n1);
-        String name = "DoubleDecker Sandwich";
+        Log.d("WWD", "mainName is " + name);
 
-        List<String> aka = new ArrayList<String>();
-
-        // logic for parsing AKA array
-        List<String> aka2 = new ArrayList<>();
-        JSONArray jsonAKA = new JSONArray();
+        // parse alsoKnownAs array from name JSON object
+        JSONArray jsonAKAArray = new JSONArray();
         try {
-            jsonAKA  = jsonName.getJSONArray("alsoKnownAs");
+            jsonAKAArray  = jsonName.getJSONArray("alsoKnownAs");
         } catch (JSONException e) {
             Log.d("WWD", "got exception parsing AKA");
             e.printStackTrace();
         }
+        List<String> akaStringList = toStringListArray(jsonAKAArray);
 
-        Log.d("WWD", "AKA is " + jsonAKA);
-        int len = jsonAKA.length();
-
-        Log.d("WWD", "length of AKA array is " + len);
-        /* for (int i =0 ; i < len ;i++) {
-            try {
-                aka2.add(jsonAKA.getJSONObject(i).toString());
-            } catch (JSONException e) {
-                Log.d("WWD", "error parsing AKA");
-                e.printStackTrace();
-            }
-            Log.d("WWD", "aka is " + aka2.get(i));
-        } */
-
-
-        String origin2 = null;
+        // next parse origin from JSON object
+        String origin = "";
         try {
-            origin2 = jOBJ.getString("placeOfOrigin");
+            origin = jsonOBJ.getString("placeOfOrigin");
         } catch (JSONException e) {
             Log.d("WWD", "got exception parsing place of origin");
             e.printStackTrace();
         }
-        Log.d("WWD","place of origin is " + origin2);
-        String desc2 = null;
+        Log.d("WWD","place of origin is " + origin);
+
+        // next parse description from JSON object
+        String description = "";
         try {
-            desc2 = jOBJ.getString("description");
+            description = jsonOBJ.getString("description");
         } catch (JSONException e) {
             Log.d("WWD", "got exception parsing description");
             e.printStackTrace();
         }
-        Log.d("WWD", "description is  " + desc2 );
-        aka.add("Warrens sandwich");
-        aka.add("Best sandwich ever");
-        String origin = "Dallas, Texas";
-        String description = "very delicious sandwich";
-        String image = "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Grilled_ham_and_cheese_014.JPG/800px-Grilled_ham_and_cheese_014.JPG";
-        List<String> ingredients = new ArrayList<>();
-        Sandwich sandwich = new Sandwich(name, aka,origin,description,image, ingredients);
+        Log.d("WWD", "description is  " + description);
+
+        // next parse image URL from JSON object
+        String imageURL = "";
+        try {
+            imageURL = jsonOBJ.getString("image");
+        } catch (JSONException e) {
+            Log.d("WWD", "got exception parsing image URL");
+            e.printStackTrace();
+        }
+        Log.d("WWD", "image URL is  " + imageURL);
+
+        // next parse ingredients array from JSON object
+        // parse alsoKnownAs array from name JSON object
+        JSONArray jsonIngredientArray = new JSONArray();
+        try {
+            jsonIngredientArray  = jsonOBJ.getJSONArray("ingredients");
+        } catch (JSONException e) {
+            Log.d("WWD", "got exception parsing ingredients");
+            e.printStackTrace();
+        }
+        List<String> ingredients = toStringListArray(jsonIngredientArray);
+        Log.d("WWD", "the ingredients are " + ingredients);
+
+        //finally create our delicious sandwich then return it
+        //public Sandwich(String mainName, List<String> alsoKnownAs, String placeOfOrigin, String description, String image, List<String> ingredients) {
+        Sandwich sandwich = new Sandwich(name, akaStringList, origin, description, imageURL, ingredients);
         return sandwich;
     }
 }
