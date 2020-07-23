@@ -3,6 +3,7 @@ package com.udacity.sandwichclub;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,18 +58,19 @@ public class DetailActivity extends AppCompatActivity {
                 .into(ingredientsIv);
 
         setTitle(sandwich.getMainName());
-        mOrigin = (TextView) findViewById(R.id.also_known_tv);
+        mOrigin = (TextView) findViewById(R.id.origin_tv);
         mDescription = (TextView)  findViewById(R.id.description_tv);
         mIngredients = (TextView)  findViewById(R.id.ingredients_tv);
         mAlsoKnownAs = (TextView)  findViewById(R.id.also_known_tv);
 
         mOrigin.setText(sandwich.getPlaceOfOrigin());
+        Log.d("WWD", "in DetailActivity origin is " + sandwich.getPlaceOfOrigin());
         mDescription.setText(sandwich.getDescription());
 
         List<String> akaList = new ArrayList<String>();
         akaList = sandwich.getAlsoKnownAs();
         for (String str : akaList) {
-            mAlsoKnownAs.append(str + " , ");
+            mAlsoKnownAs.append(str + "  ");
         }
 
         List<String> ingredientList = new ArrayList<String>();
